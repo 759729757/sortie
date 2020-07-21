@@ -11,7 +11,7 @@
               </p>
             </a>
             <h4>
-                米兰时装周
+                米兰时装周1
               </h4>
           </div>
         </swiper-slide>
@@ -24,7 +24,7 @@
               </p>
             </a>
             <h4>
-              袁博超：超时代
+              袁博超：超时代2
             </h4>
           </div>
         </swiper-slide>
@@ -36,7 +36,7 @@
               </p>
             </a>
             <h4>
-              刘浩：INSTALOVER
+              刘浩：INSTALOVER3
             </h4>
           </div>
         </swiper-slide>
@@ -48,7 +48,7 @@
               </p>
             </a>
             <h4>
-              米兰时装周
+              米兰时装周4
             </h4>
           </div>
         </swiper-slide>
@@ -60,42 +60,16 @@
       <div class="swiper-button-next" slot="navigation"></div>
     </div>
 
-    <div class="container news-warp">
 
-      <div class="item">
-        <img class="news-img" src="../assets/images/news1.jpg" alt="">
-        <p>第一个新闻标题~标题不超过14文字</p>
-      </div>
-      <div class="item">
-        <img class="news-img" src="../assets/images/news2.jpg" alt="">
-        <p>第一个新闻标题~标题不超过14文字</p>
-      </div>
-      <div class="item">
-        <img class="news-img" src="../assets/images/news3.jpg" alt="">
-        <p>第一个新闻标题~标题不超过14文字</p>
-      </div>
-      <div class="item">
-        <img class="news-img" src="../assets/images/news1.jpg" alt="">
-        <p>第一个新闻标题~标题不超过14文字</p>
-      </div>
-      <div class="item">
-        <img class="news-img" src="../assets/images/news2.jpg" alt="">
-        <p>第一个新闻标题~标题不超过14文字</p>
-      </div>
+<!--    新闻模块-->
+    <News></News>
 
-    </div>
-    <!--分页组件-->
-    <el-pagination
-      :page-size="20"
-      :pager-count="11"
-      layout="prev, pager, next"
-      :total="1000">
-    </el-pagination>
   </div>
 </template>
 
 <script>
   import NavClient from '../components/nav'
+  import News from '../components/news'
   import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
   import 'swiper/css/swiper.css'
 
@@ -103,14 +77,17 @@
       name: "index",
       components:{
         NavClient,Swiper,
-        SwiperSlide
+        SwiperSlide,News
       },
       props:[],
       data(){
         return{
           swiperOptions: {
             loop:true,
-            slidesPerView :3,spaceBetween : 20,
+            initialSlide:0,
+            slidesPerView :'auto',
+            // slidesPerView :document.documentElement.clientWidth < 768 ? 1 : 3,
+            spaceBetween : 20,
             // pagination: {//分页器
             //   el: '.swiper-pagination'
             // },
@@ -118,8 +95,12 @@
               nextEl: '.swiper-button-next',
               prevEl: '.swiper-button-prev',
             },
+            updateOnWindowResize: true,
+            observer:true,//修改swiper自己或子元素时，自动初始化swiper
+            observeParents:true//修改swiper的父元素时，自动初始化swiper
             // Some Swiper option/callback...
           },
+
         }
       },
       directives: {
@@ -134,7 +115,15 @@
 
       },
       mounted() {
-        this.swiper.slideTo(3, 1000, false)
+        // this.swiper.slideTo(3, 1000, false);
+
+        var self = this;
+        // window.onresize = function(){ // 定义窗口大小变更通知事件
+        //   console.log(document.documentElement.clientWidth);
+        //   if(document.documentElement.clientWidth < 768){
+        //     self.swiperOptions.slidesPerView = 1
+        //   }
+        // };
 
       },
 
@@ -148,6 +137,9 @@
   .banner-warp .swiper-slide p::before{position: absolute;width: 100%;height: 100%;content: '';left: 0;top: 0;
     z-index: 99;background-color: rgba(0,0,0,.4);opacity: 0;transition: all .3s;}
   .banner-warp .swiper-slide p:hover::before{opacity: 1;}
+  .swiper-slide{
+    width: 33.33%;
+  }
   /deep/.swiper-button-prev, .swiper-container-rtl .swiper-button-next{
     left: -40px;    opacity: 1;
     color: black;
@@ -158,13 +150,16 @@
     color: black;
     font-weight: bold;
   }
-
-  .news-warp{display: flex;align-items: center;flex-direction: column;justify-content: center;}
-  .news-warp .item{margin-bottom: 10px;}
-  .news-warp .item:first-child{margin-top: 50px;}
-  .news-warp p{margin: 5px 0 15px 0;}
-  .news-warp .news-img{
-    width: 600px;
+  @media (max-width: 768px) {
+    .swiper-slide{
+      width:100%;
+    }
+    .swiper-button-next,.swiper-button-prev{display: none;}
   }
+
+
+  .el-pagination{max-width: 100%;}
+
+
 
 </style>

@@ -13,12 +13,14 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "bootstrap": "^3.4.1",
     "element-ui": "^2.13.2",
     "jquery": "^1.9.1",
     "swiper": "^5.4.2",
     "vue": "^2.5.2",
     "vue-awesome-swiper": "^4.1.1",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "weixin-js-sdk": "^1.6.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

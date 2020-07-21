@@ -1,6 +1,13 @@
 <template>
   <div id="app">
     <router-view/>
+
+    <!--    底部footer-->
+    <div class="footer container-full">
+      <div class="container text-center">
+        这里放网站版权信息copyright
+      </div>
+    </div>
   </div>
 </template>
 
@@ -16,12 +23,25 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  min-height: 100vh;padding-top: 1px;
+  position: relative;padding-bottom:80px;
 }
-a{text-decoration: none;color: #606266;;}
+*::-webkit-scrollbar{display: none;}
+a{text-decoration: none;color: #000000;}
+a:hover{text-decoration: none;color: #999;}
 img{max-width: 100%;}
   .container{
     max-width: 1200px;
     margin: 0 auto;
   }
+.footer{margin-top: 100px;background-image:linear-gradient(0, #ccc, #fff);padding: 10px;color: #999;font-size: 12px;
+position: absolute;bottom: 0;left: 0;width: 100%;
+}
+@media  (max-width: 768px){
+  .footer{
+    margin-top: 20px;
+  }
+}
+.el-pagination{max-width: 100%;}
 
 </style>

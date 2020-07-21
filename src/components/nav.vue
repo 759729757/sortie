@@ -5,9 +5,9 @@
         <el-input v-model="searchInput" :placeholder="langValue ==='Chinese' ? '搜索':'Search'"></el-input>
       </div>
       <div class="icon">
-        <a href="javascript:void(0);">
+        <router-link to="/">
           <img src="../assets/images/logo.jpg" alt="Sortie">
-        </a>
+        </router-link>
       </div>
       <div class="options">
         <el-select v-model="langValue" placeholder="请选择" @change="changeLang()" size="mini">
@@ -29,11 +29,14 @@
 
       </div>
     </div>
+<!--    导航栏列表 -->
     <div class="nav-tab-bar">
-      <div class="tab" v-for="item in tabArr" :class="langValue==='Chinese'?'bold':''" :v-key="item">
-        <a href="">
-          {{item}}
-        </a>
+      <div class="tab" v-for="item in tabArr"
+           :class="[langValue==='Chinese'?'bold':'',$route.path == item.path ? 'active':'' ]"
+           :v-key="item">
+        <router-link :to="item.path">
+          {{item.name}}
+        </router-link>
       </div>
     </div>
   </div>
@@ -57,8 +60,8 @@
             ],
             langValue: 'Chinese',
 
-            tabArrCn:['关于我们','电子刊','咨询活动','商店'],
-            tabArrEn:['ABOUT','MAGAZINE','NEWS','STORE'],
+            tabArrCn:[{name:'关于我们',path:'/about'},{name:'电子刊',path:'/magazine'},{name:'咨询活动',path:'/news'},{name:'商店',path:'/store'}],
+            tabArrEn:[{name:'ABOUT',path:'/about'},{name:'MAGAZINE',path:'/magazine'},{name:'NEWS',path:'/news'},{name:'STORE',path:'/store'}],
             tabArr:[],
           }
       },
@@ -99,6 +102,9 @@
   }
   .nav-tab-bar .tab{
    margin: 0 40px;font-size: 16px;font-weight: bold;
+  }
+  .nav-tab-bar .tab.active a{
+    color: #646363;
   }
   .bold{
     font-weight: bold;
