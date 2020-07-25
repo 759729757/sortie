@@ -5,11 +5,18 @@ import Index from '@/pages/index'
 import News from '@/pages/news'
 import About from '@/pages/about'
 import NotFound from '@/pages/notFound'
+import wxPay from '@/pages/wx/pay'
 
 Vue.use(Router)
 
 export default new Router({
+  mode:'history',
   routes: [
+    {
+      path: '/pay',
+      name: 'pay',
+      component: wxPay
+    },
     {
       path: '/',
       name: 'Index',
