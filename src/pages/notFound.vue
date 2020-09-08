@@ -1,19 +1,16 @@
 <template>
   <div>
-    <NavClient></NavClient>
     <h1 class="page-container">404 page not found</h1>
 
   </div>
 </template>
 
 <script>
-  import NavClient from '../components/nav'
   import News from '../components/news'
 
     export default {
       name: "newsPage",
       components:{
-        NavClient,
         News
       },
       props:[],

@@ -1,20 +1,37 @@
 <template>
   <div id="app">
-    <router-view/>
+
+    <NavClient></NavClient>
+    <MbNavClient ></MbNavClient>
+    <router-view />
 
     <!--    底部footer-->
-    <div class="footer container-full">
-      <div class="container text-center">
-        这里放网站版权信息copyright
-      </div>
-    </div>
+<!--    <div class="footer container-full">-->
+<!--      <div class="container text-center">-->
+<!--        这里放网站版权信息copyright-->
+<!--      </div>-->
+<!--    </div>-->
   </div>
 </template>
 
 <script>
-export default {
-  name: 'App'
-}
+  import NavClient from './components/nav'
+  import MbNavClient from './components/mbnav'
+  export default {
+    name: 'App',
+    components:{
+      NavClient,MbNavClient
+    },
+    data(){
+      return{
+
+      }
+    },
+    mounted(){
+
+    }
+
+  }
 </script>
 
 <style>
@@ -37,7 +54,29 @@ img{max-width: 100%;}
 .footer{margin-top: 100px;background-image:linear-gradient(0, #ccc, #fff);padding: 10px;color: #999;font-size: 12px;
 position: absolute;bottom: 0;left: 0;width: 100%;
 }
+.mb-only{
+  display: none;
+}
+.content{
+  width: 680px;margin: auto;
+  margin-top: 30px;text-align: left;font-size: 14px;line-height: 26px;
+  text-space: 28px;
+}
+
+@media (max-width: 769px) {
+  .content,.container{
+    width: 96%;
+    margin: 0 2%;
+  }
+}
 @media  (max-width: 768px){
+  .pc-only{display: none;}
+  .mb-only{
+    display: block;
+  }
+  .mbnav+div{
+    margin-top: 45px;
+  }
   .footer{
     margin-top: 20px;
   }

@@ -1,66 +1,24 @@
 <template>
   <div>
-    <NavClient></NavClient>
     <div class="banner-warp container">
       <swiper ref="mySwiper" :options="swiperOptions">
-        <swiper-slide>
+        <swiper-slide v-for="item in banner">
           <div>
-            <a href="">
+            <router-link to="magazine">
               <p>
-                <img src="../../src/assets/images/banner1.jpg" alt=""  />
+                <img :src="item.headImg" alt=""  />
               </p>
-            </a>
-            <h4>
-                米兰时装周1
-              </h4>
-          </div>
-        </swiper-slide>
-        <swiper-slide>
-          <div>
-
-            <a href="">
-              <p>
-                <img src="../../src/assets/images/banner2.jpg" alt=""  />
-              </p>
-            </a>
-            <h4>
-              袁博超：超时代2
-            </h4>
-          </div>
-        </swiper-slide>
-        <swiper-slide>
-          <div>
-            <a href="">
-              <p>
-                <img src="../../src/assets/images/banner1.jpg" alt=""  />
-              </p>
-            </a>
-            <h4>
-              刘浩：INSTALOVER3
-            </h4>
-          </div>
-        </swiper-slide>
-        <swiper-slide>
-          <div>
-            <a href="">
-              <p>
-                <img src="../../src/assets/images/banner2.jpg" alt=""  />
-              </p>
-            </a>
-            <h4>
-              米兰时装周4
-            </h4>
+            </router-link>
+            <h4>{{item.name}}</h4>
           </div>
         </swiper-slide>
 
         <div class="swiper-pagination" slot="pagination"></div>
       </swiper>
       <!-- 如果需要导航按钮 -->
-      <div class="swiper-button-prev" slot="navigation"></div>
-      <div class="swiper-button-next" slot="navigation"></div>
+<!--      <div class="swiper-button-prev" slot="navigation"></div>-->
+<!--      <div class="swiper-button-next" slot="navigation"></div>-->
     </div>
-
-
 <!--    新闻模块-->
     <News></News>
 
@@ -69,25 +27,28 @@
 
 <script>
   import NavClient from '../components/nav'
+  import MbNavClient from '../components/mbnav'
   import News from '../components/news'
   import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
   import 'swiper/css/swiper.css'
+  import {getMagazine,getAbout} from '../api'
 
     export default {
       name: "index",
       components:{
         NavClient,Swiper,
-        SwiperSlide,News
+        SwiperSlide,News,MbNavClient
       },
       props:[],
       data(){
         return{
+          banner:[],
           swiperOptions: {
             loop:true,
             initialSlide:0,
             slidesPerView :'auto',
             // slidesPerView :document.documentElement.clientWidth < 768 ? 1 : 3,
-            spaceBetween : 20,
+            spaceBetween : 0,
             // pagination: {//分页器
             //   el: '.swiper-pagination'
             // },
@@ -124,6 +85,10 @@
         //     self.swiperOptions.slidesPerView = 1
         //   }
         // };
+        getMagazine().then(res=>{
+          console.log('getMagazine',res)
+          this.banner = res.data;
+        })
 
       },
 
@@ -132,7 +97,7 @@
 
 <style scoped>
   .banner-warp{position: relative;color: #646363;}
-  .swiper-container{border-bottom: 4px solid #000;padding-bottom: 10px;}
+  .swiper-container{border-bottom: 1px solid #000;padding-bottom: 10px;margin-bottom: 20px;}
   .banner-warp .swiper-slide p{position: relative;overflow: hidden;}
   .banner-warp .swiper-slide p::before{position: absolute;width: 100%;height: 100%;content: '';left: 0;top: 0;
     z-index: 99;background-color: rgba(0,0,0,.4);opacity: 0;transition: all .3s;}
@@ -150,9 +115,15 @@
     color: black;
     font-weight: bold;
   }
+  /deep/.swiper-slide{
+    padding: 0 10px;
+  }
   @media (max-width: 768px) {
     .swiper-slide{
       width:100%;
+    }
+    .swiper-container{
+      border-bottom-width: 2px;
     }
     .swiper-button-next,.swiper-button-prev{display: none;}
   }

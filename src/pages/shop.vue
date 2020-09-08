@@ -1,8 +1,7 @@
 <template>
-  <div>
-<!--    新闻模块-->
-    <News></News>
-
+  <div class="content">
+    <img src="../assets/shop.jpg"
+         style="width: 70%;margin: 0 15%;">
   </div>
 </template>
 
