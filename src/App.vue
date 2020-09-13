@@ -1,8 +1,8 @@
 <template>
   <div id="app">
 
-    <NavClient></NavClient>
-    <MbNavClient ></MbNavClient>
+<!--    <NavClient></NavClient>-->
+<!--    <MbNavClient ></MbNavClient>-->
     <router-view />
 
     <!--    底部footer-->

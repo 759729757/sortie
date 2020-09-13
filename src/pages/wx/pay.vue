@@ -4,7 +4,7 @@
 <!--    <div v-for="item in magazine" :key="item.name">-->
       <div class='box'>
         <div class="banner-warp flex-col"  >
-          <img class="banner-image" :src="magazine[0].headImg" />
+          <img class="banner-image" :src="imgUrl+magazine[0].magazineNum+'/'+magazine[0].subHeadImg[0]" />
           <div class=" subscript">
             已有 {{magazine[0].sold}} 人订阅
           </div>
@@ -104,15 +104,16 @@
 <script>
   import wx from 'weixin-js-sdk';
   import axios from 'axios';
-  import {loginByCode,getMagazine,userBuy,userRecord,getUserInfoByWechat} from '../../api'
+  import {loginByCode,getBanner,userBuy,userRecord,getUserInfoByWechat} from '../../api'
 
-  var isDev = false;//发布是时候需要改成 false
+  var isDev = true;//发布是时候需要改成 false
 
   export default {
     name: "pay",
     data() {
       return {
         activeTabName:'all',
+        imgUrl:'https://wechat.planetofficial.cn/images/magazines/',
 
         payDisable:false,//支付按钮是否失效（防止重复下单)
         paySuccess:false,//成功购买后弹框
@@ -361,14 +362,13 @@
       else {
         axios.defaults.headers.common['Authorization'] = this.foowwLocalStorage.get("token");
         this.config();
+        this.getUserBuy();//获取购买记录
+
       }
 
-     this.getUserBuy();//获取购买记录
-      // userRecord({token:this.foowwLocalStorage.get("token")}).then(res=>{
-      //     console.log('userRecord:',res);
-      //     this.RecordArr = res.data;
-      // })
-      getMagazine().then((res) => {
+
+      console.log('进入购买页面')
+      getBanner().then((res) => {
         console.log('getMagazine',res.data);
         this.magazine = res.data;
         this.diyPrice = res.data[0].price;

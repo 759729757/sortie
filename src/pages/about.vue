@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="content">
+    <div class="content ql-editor">
       <span v-html="aboutdata.content"></span>
     </div>
 

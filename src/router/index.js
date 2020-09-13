@@ -17,45 +17,45 @@ export default new Router({
   mode:'history',
   routes: [
     {
-      path: '/pay',
+      path: '/',
       name: 'pay',
       component: wxPay
     },
-    {
-      path: '/search',
-      name: 'search',
-      component: Search
-    },
-    {
-      path: '/',
-      name: 'Index',
-      component: Index
-    },
-    {
-      path: '/magazine',
-      name: 'Magazine',
-      component: Magazine
-    },
-    {
-      path: '/news',
-      name: 'News',
-      component: News
-    },
-    {
-      path: '/newsDetail',
-      name: 'newsDetail',
-      component: NewsDetail
-    },
-    {
-      path: '/about',
-      name: 'About',
-      component: About
-    },
-    {
-      path: '/store',
-      name: 'Shop',
-      component: Shop
-    },
+    // {
+    //   path: '/search',
+    //   name: 'search',
+    //   component: Search
+    // },
+    // {
+    //   path: '/',
+    //   name: 'Index',
+    //   component: Index
+    // },
+    // {
+    //   path: '/magazine',
+    //   name: 'Magazine',
+    //   component: Magazine
+    // },
+    // {
+    //   path: '/news',
+    //   name: 'News',
+    //   component: News
+    // },
+    // {
+    //   path: '/newsDetail',
+    //   name: 'newsDetail',
+    //   component: NewsDetail
+    // },
+    // {
+    //   path: '/about',
+    //   name: 'About',
+    //   component: About
+    // },
+    // {
+    //   path: '/store',
+    //   name: 'Shop',
+    //   component: Shop
+    // },
 
     {
       path: '*',
