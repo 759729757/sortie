@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div class="content">
+    <div class="content ql-editor">
       <span v-html="aboutdata.content"></span>
     </div>
 
+    <Footerbar></Footerbar>
   </div>
 </template>
 
@@ -12,11 +13,12 @@
   //引入富文本css
   import '../assets/quill.core.css'
   import '../assets/quill.snow.css'
+  import Footerbar from '../components/footerbar'
 
     export default {
       name: "about",
       components:{
-
+        Footerbar
       },
       props:[],
       data(){

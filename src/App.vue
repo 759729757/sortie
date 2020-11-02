@@ -41,14 +41,14 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   min-height: 100vh;padding-top: 1px;
-  position: relative;padding-bottom:80px;
+  position: relative;
 }
 *::-webkit-scrollbar{display: none;}
 a{text-decoration: none;color: #000000;}
 a:hover{text-decoration: none;color: #999;}
 img{max-width: 100%;}
   .container{
-    max-width: 1200px;
+    width: 1200px;
     margin: 0 auto;
   }
 .footer{margin-top: 100px;background-image:linear-gradient(0, #ccc, #fff);padding: 10px;color: #999;font-size: 12px;

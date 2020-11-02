@@ -7,19 +7,21 @@
 
     <div v-if="searchData">----------未找到您输入的内容----------</div>
 <!--    新闻-->
-    <news :newsData="news"></news>
+    <news  v-if="news.length" :newsData="news"></news>
 
+    <Footerbar></Footerbar>
   </div>
 </template>
 
 <script>
   import News from '../components/news'
   import {findNewsByName, getNews} from '../api'
+  import Footerbar from '../components/footerbar'
 
     export default {
       name: "newsPage",
       components:{
-        News
+        News,Footerbar
       },
       props:[],
       data(){

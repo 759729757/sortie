@@ -6,7 +6,7 @@
         <span class="pull-right time">{{newsData.update_date}}</span>
       </div>
       <br>
-      <div class="clear content " v-if="newsData.swiper.length>0">
+      <div class="clear content " v-if="newsData.swiper && newsData.swiper.length>0">
         <swiper ref="mySwiper" class="swiper" :options="swiperOptions">
           <swiper-slide v-for="item in newsData.swiper">
             <div>
@@ -25,8 +25,21 @@
 
       <div class="clear ql-editor">
         <span v-html="newsData.content"></span>
+        <span v-if="newsData.author" class="pull-right" style="margin-top: 30px;">责任编辑：{{newsData.author}}</span>
       </div>
     </div>
+
+    <div class="content recommend" v-if="recommend.length">
+      <h4 class="text-center"><strong>阅读更多 READ MORE</strong></h4>
+      <div v-for="item in recommend" :key="item._id"
+      class="item-3" @click="toDetail(item._id)">
+<!--        <a target="_blank" :href="'newsDetail?news='+item._id">-->
+          <img :src="item.poster" alt="">
+          <p class="text-aline">{{item.title}}</p>
+<!--        </a>-->
+      </div>
+    </div>
+    <Footerbar></Footerbar>
   </div>
 </template>
 
@@ -41,14 +54,17 @@
   import NavClient from "../components/nav";
   import News from "../components/news";
   import MbNavClient from "../components/mbnav";
+  import Footerbar from '../components/footerbar'
 
   export default {
       name: "newsDetail",
       data(){
         return{
           newsData:{},
+          recommend:[],
           swiperOptions: {
             loop:true,
+            autoplay:2000,
             initialSlide:0,
             slidesPerView :'auto',
             // slidesPerView :document.documentElement.clientWidth < 768 ? 1 : 3,
@@ -65,13 +81,38 @@
             observeParents:true//修改swiper的父元素时，自动初始化swiper
             // Some Swiper option/callback...
           },
+          newsTypes:''
         }
       },
       components:{
         Swiper,
-        SwiperSlide
+        SwiperSlide,
+        Footerbar
       },
       methods:{
+
+        getCommend(){
+          let params={limit:4,position:'main'}
+          if(this.newsTypes)params.newsTypes = this.newsTypes;
+
+          getNews(params).then(res=>{
+            let recommend=res.data
+            if(!recommend.length)return;
+            recommend = recommend.filter( item => {
+              return item.title != document.title
+            })
+            if(recommend.length ===4 ){
+              recommend.pop();
+            }
+            console.log('recommend',recommend);
+            this.recommend = recommend;
+          })
+        },
+
+        toDetail:function(val){
+          window.open('/newsDetail?news='+val+'&type='+this.newsTypes)
+        },
+
 
       },
       directives: {
@@ -82,14 +123,27 @@
           return this.$refs.mySwiper.$swiper
         }
       },
+      watch:{
+        newsTypes(val){
+          this.getCommend();
+        },
+      },
       mounted(){
         const id = this.$route.query.news;
+        this.newsTypes = this.$route.query.type;
+        let param = {_id :id}
+        if(this.$route.query.showSoldOut){
+          param.showSoldOut = 1
+        }
+        if(this.newsTypes === 'undefined')this.newsTypes = null;
         if(!id) this.$router.back();
 
-        getNews({_id:id}).then(res=>{
+        getNews(param).then(res=>{
           console.log(res)
           this.newsData=res.data[0];
+          document.title = res.data[0].title;
         })
+        this.getCommend();
 
       },
 
@@ -97,6 +151,7 @@
 </script>
 
 <style scoped>
+  a{color: inherit;}
   .content{
     width: 680px;margin: auto;
     margin-top: 30px;text-align: left;font-size: 14px;line-height: 26px;
@@ -112,6 +167,9 @@
 .swiper{
   width: 50%;margin: auto;display: block;
 }
+.text-aline{width: 100%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+.recommend{margin-top: 40px;overflow: hidden;}
+.item-3{width: 33.333%;box-sizing: border-box;padding: 10px 20px;float: left;margin-top: 20px;}
   @media (max-width: 769px) {
     .content{
       width: 96%;

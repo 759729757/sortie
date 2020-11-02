@@ -3,16 +3,18 @@
 <!--    新闻模块-->
     <News></News>
 
+    <Footerbar></Footerbar>
   </div>
 </template>
 
 <script>
   import News from '../components/news'
+  import Footerbar from '../components/footerbar'
 
     export default {
       name: "newsPage",
       components:{
-        News
+        News,Footerbar
       },
       props:[],
       data(){

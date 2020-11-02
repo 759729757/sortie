@@ -123,9 +123,9 @@
         dialogTableVisible:false,
         checkedMenu: 0,//选中的套餐 第几个
         setMeal: [
-          { number: '1', price: '6.00' },
-          { number: '10', price: '60.00' },
-          { number: '100', price: '600.00' },
+          { number: '1', price: '8.00' },
+          { number: '10', price: '80.00' },
+          { number: '100', price: '800.00' },
         ],
         order:{number: '1', price: '6.00' },
         diyNumber:1,diyPrice:6,
@@ -263,7 +263,7 @@
         axios.get('https://wechat.studiosortie.com/wxPurchase',
           {
             params: {
-              magazine: '5f0aaaba7c27ba61a46d253f',
+              magazine: this.menu._id,
               amount: amount,
               tradeCount: tradeCount,
               tradeBody: tradebody,
@@ -506,8 +506,8 @@
     background: #cf9236;color: white;
   }
   .poster-md{
-    width: 130px;margin-right: 20px;
-    max-height: 171px;
+    width: 130px;height: 164px;
+    margin-right: 20px;
   }
 
   /deep/ .payDialog .el-dialog__header{

@@ -2,16 +2,18 @@
   <div>
     <h1 class="page-container">404 page not found</h1>
 
+    <Footerbar></Footerbar>
   </div>
 </template>
 
 <script>
   import News from '../components/news'
+  import Footerbar from '../components/footerbar'
 
     export default {
       name: "newsPage",
       components:{
-        News
+        News,Footerbar
       },
       props:[],
       data(){

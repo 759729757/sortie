@@ -16,6 +16,9 @@
         </router-link>
       </div>
       <div class="options">
+        <router-link to="/about">
+          {{ langValue==='Chinese'?'关于我们':'About' }}
+        </router-link>
         <el-select v-model="langValue" placeholder="请选择" @change="changeLang()" size="mini">
           <el-option
             v-for="item in langOptions"
@@ -36,26 +39,38 @@
       </div>
     </div>
 <!--    导航栏列表 -->
-    <div class="nav-tab-bar">
+    <div :class="'nav-tab-bar '+ (langValue==='Chinese'? '':'en-tab')">
       <div class="tab" v-if="thisPath != '/'">
         <router-link to="/">
-          首页
+
+          {{ langValue==='Chinese'? '首页' :'HOME' }}
         </router-link>
       </div>
       <div class="tab" v-for="item in tabArr"
-           :class="[langValue==='Chinese'?'bold':'',$route.path == item.path ? 'active':'' ]"
+           :class="[langValue==='Chinese'?'bold':'en-nav',$route.path == item.path ? 'active':'' ]"
            :v-key="item">
         <router-link :to="item.path">
           {{item.name}}
         </router-link>
       </div>
+<!--      tabTypeArr-->
+
+      <div class="tab" v-for="item in tabTypeArr"
+           :class="[langValue==='Chinese'?'bold':'en-nav',$route.path == item.path ? 'active':'' ]"
+           :v-key="item">
+        <router-link :to="'/news?type='+item._id">
+          {{ langValue==='Chinese'? item.name :　item.enName }}
+        </router-link>
+      </div>
+
     </div>
   </div>
 
 </template>
 
 <script>
-    export default {
+  import { getNewsType } from '../api'
+  export default {
         name: "NavClient",
       data(){
           return{
@@ -72,14 +87,20 @@
             ],
             langValue: 'Chinese',
 
-            tabArrCn:[{name:'关于我们',path:'/about'},{name:'电子刊',path:'/magazine'},{name:'资讯活动',path:'/news'},{name:'商店',path:'/store'}],
-            tabArrEn:[{name:'ABOUT',path:'/about'},{name:'MAGAZINE',path:'/magazine'},{name:'NEWS',path:'/news'},{name:'STORE',path:'/store'}],
+            tabArrCn:[{name:'电子刊',path:'/magazine'},],
+            tabArrEn:[{name:'MAGAZINE',path:'/magazine'},],
             tabArr:[],
+            tabTypeArr:[],//类型的选择
             searchActive:"",
           }
       },
       mounted(){
         this.tabArr = this.tabArrCn //默认是中文导航
+        getNewsType({limit:100}).then(res => {
+          console.log(res);
+          this.tabTypeArr=res.data.data;
+
+        })
       },
       watch:{
         $route:{
@@ -113,7 +134,7 @@
 </script>
 
 <style scoped>
-  a{text-decoration: none;color: #000000;}
+  a{text-decoration: none;color: inherit;white-space: nowrap;}
   .header{
     margin-top: 10px;margin-bottom: 10px;position: relative;
   }
@@ -124,6 +145,7 @@
   .options{
     font: 400 12px Arial;
     line-height: 40px;
+    color: #606266;
   }
   .search,.options{width: 200px;}
   /*.search-warp{position: relative;}*/
@@ -150,6 +172,8 @@
   .nav-tab-bar .tab{
    margin: 0 40px;font-size: 16px;font-weight: bold;
   }
+  .en-tab.nav-tab-bar .tab{margin: 0 20px;}
+  /*.nav-tab-bar .en-nav{font-size: 18px;}*/
   .nav-tab-bar .tab.active a{
     color: #646363;
   }

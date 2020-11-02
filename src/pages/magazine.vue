@@ -1,15 +1,19 @@
 <template>
-  <div class="container">
-    <div class="item magazine" v-for="item in magazine">
-      <div @click="showQrcode">
-        <div >
-          <p>
-            <img :src="item.headImg" alt=""  />
-          </p>
+  <div class="">
+    <div class="container">
+      <div class="item magazine" v-for="item in magazine">
+        <div @click="showQrcode">
+          <div >
+            <p>
+              <img :src="item.headImg" alt=""  />
+            </p>
+          </div>
+          <h4>{{item.subTitle}}</h4>
+          <h4>{{item.name}}</h4>
         </div>
-        <h4>{{item.name}}</h4>
       </div>
     </div>
+
 
     <el-dialog
       title="微信扫一扫购买阅读码"
@@ -18,17 +22,19 @@
       <img src="../assets/payQrcode.png" alt="">
     </el-dialog>
 
+    <Footerbar></Footerbar>
   </div>
 </template>
 
 <script>
   import News from '../components/news'
   import {getMagazine} from '../api'
+  import Footerbar from '../components/footerbar'
 
     export default {
       name: "newsPage",
       components:{
-        News
+        News,Footerbar
       },
       props:[],
       data(){

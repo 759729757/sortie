@@ -46,8 +46,8 @@
         ],
         langValue: 'Chinese',
 
-        tabArrCn:[{name:'关于我们',path:'/about'},{name:'电子刊',path:'/magazine'},{name:'资讯活动',path:'/news'},{name:'商店',path:'/store'}],
-        tabArrEn:[{name:'ABOUT',path:'/about'},{name:'MAGAZINE',path:'/magazine'},{name:'NEWS',path:'/news'},{name:'STORE',path:'/store'}],
+        tabArrCn:[{name:'电子刊',path:'/magazine'},{name:'资讯活动',path:'/news'}],
+        tabArrEn:[{name:'MAGAZINE',path:'/magazine'},{name:'NEWS',path:'/news'}],
         tabArr:[],
       }
     },
@@ -148,7 +148,7 @@
 
   .mbnav ul li a {
     color: rgb(255, 255, 255);
-    font-size: 16px;
+    font-size: 17px;
     display: block;
     cursor: pointer;
   }
