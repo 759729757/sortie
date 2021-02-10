@@ -78,6 +78,8 @@
           swiperOptions: {
             loop:true,
             initialSlide:0,
+            autoplay:true,
+            speed:300,
             slidesPerView :'auto',
             // slidesPerView :document.documentElement.clientWidth < 768 ? 1 : 3,
             spaceBetween : 0,

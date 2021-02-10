@@ -9,7 +9,7 @@ import About from '@/pages/about'
 import NotFound from '@/pages/notFound'
 import wxPay from '@/pages/wx/pay'
 import Shop from '@/pages/shop'
-import Magazine from '@/pages/magazine'
+import Magazine from '@/pages/magazine/magazine'
 
 Vue.use(Router)
 
