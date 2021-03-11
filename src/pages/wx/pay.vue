@@ -1,28 +1,30 @@
 <template>
   <div class="body">
-<!--    <img class="logo" src="../../assets/images/logo.jpg" alt="">-->
-<!--    <div v-for="item in magazine" :key="item.name">-->
-      <div class='box'>
-        <div class="banner-warp flex-col"  >
-          <img class="banner-image" :src="imgUrl+magazine[0].magazineNum+'/'+magazine[0].subHeadImg[0]" />
-          <div class=" subscript">
-            已有 {{magazine[0].sold}} 人订阅
-          </div>
-          <div class="title-warp">
-            <div class="title">
-              <div class="date">{{magazine[0].subTitle}}</div>
-              {{magazine[0].name}}
-            </div>
-            <div class="btn" @click="showMenu(magazine[0])" >购买</div>
-          </div>
-        </div>
-      </div>
-<!--    </div>-->
+    <img class="logo" src="../../assets/images/watermark.png" alt="">
 
-    <el-tabs v-model="activeTabName" @tab-click="handleTabClick">
+    <!--    <img class="logo" src="../../assets/images/logo.jpg" alt="">-->
+    <!--    <div v-for="item in magazine" :key="item.name">-->
+    <!--      <div class='box'>-->
+    <!--        <div class="banner-warp flex-col"  >-->
+    <!--          <img class="banner-image" :src="imgUrl+magazine[0].magazineNum+'/'+magazine[0].subHeadImg[0]" />-->
+    <!--          <div class=" subscript">-->
+    <!--            已有 {{magazine[0].sold}} 人订阅-->
+    <!--          </div>-->
+    <!--          <div class="title-warp">-->
+    <!--            <div class="title">-->
+    <!--              <div class="date">{{magazine[0].subTitle}}</div>-->
+    <!--              {{magazine[0].name}}-->
+    <!--            </div>-->
+    <!--            <div class="btn" @click="showMenu(magazine[0])" >购买</div>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
+
+    <el-tabs v-model="activeTabName" tab-position="bottom" @tab-click="handleTabClick">
       <el-tab-pane label="全部" name="all">
         <div v-for="item in magazine" class="flex-row item-list">
-          <img class="poster-md" :src="item.headImg" >
+          <img class="poster-md" :src="imgUrl+item.magazineNum+'/'+item.subHeadImg[0]" >
           <div class="flex flex-col">
             <h4 class="text-left"><strong>{{item.name}}</strong></h4>
             <small class="text-left">
@@ -32,50 +34,57 @@
           </div>
         </div>
       </el-tab-pane>
-<!--      购买过的记录-->
-      <el-tab-pane label="SORTIE CODE" name="code">
-          <div v-for="item in userBuyList" class="flex-row item-list">
-            <img class="poster-md" :src="item.magazine.headImg" >
-            <div class="flex flex-col">
-              <h4 class="text-left"><strong>{{item.magazine.name}}</strong></h4>
-              <el-link :underline="false" type="primary">{{item.readCode}}</el-link>
-              <div class="text-sm">可用：{{item.tradeCount}} 已用：{{item.readCodeUsed}}</div>
-              <div class="">
-                <div class="btn btn-black btn-pad" @click="readCode=item.readCode;paySuccess=true">阅读</div>
-                <el-tag type="info" class="martop-20" @click="cloneCode"
-                        v-clipboard:copy="item.readCode"
-                        v-clipboard:success="onCopy"
-                >
-                  <div class="btn btn-orange btn-pad" >复制</div>
-                </el-tag>
+      <!--      购买过的记录-->
+      <el-tab-pane label="Planet CODE" name="code">
+        <div class="user-info" v-if="userinfo && userinfo.headimgurl">
+          <img class="headImg" :src="userinfo.headimgurl" alt="">
+          <h4 style="text-align: center;">{{userinfo.nickname}}</h4>
+          <el-link type="info" @click="clearLocalStorge">更新用户信息</el-link>
+        </div>
 
-              </div>
+        <h2 v-if="!userBuyList" style="padding-top: 30%;font-size: 20px;">您还没有购买过哦</h2>
+        <div v-for="item in userBuyList" class="flex-row item-list">
+          <img class="poster-md" :src="imgUrl+item.magazine.magazineNum+'/'+item.magazine.subHeadImg[0]" >
+          <div class="flex flex-col">
+            <h4 class="text-left"><strong>{{item.magazine.name}}</strong></h4>
+            <el-link :underline="false" type="primary">{{item.readCode}}</el-link>
+            <div class="text-sm">可用：{{item.tradeCount}} 已用：{{item.readCodeUsed}}</div>
+            <div class="">
+              <div class="btn btn-black btn-pad" @click="readCode=item.readCode;paySuccess=true">阅读</div>
+              <el-tag type="info" class="martop-20" @click="cloneCode"
+                      v-clipboard:copy="item.readCode"
+                      v-clipboard:success="onCopy"
+              >
+                <div class="btn btn-orange btn-pad" >复制</div>
+              </el-tag>
+
             </div>
           </div>
+        </div>
       </el-tab-pane>
     </el-tabs>
 
-<!--    支付成功弹框-->
+    <!--    支付成功弹框-->
     <el-dialog :show-close="false" :visible.sync="paySuccess" custom-class="payDialog">
       <div>
-        <img class="pay-logo" src="../../assets/images/logo.png" >
+        <img class="pay-logo" src="../../assets/images/watermark.png" >
         <el-link :underline="false" type="info">长按识别小程序码</el-link>
         <el-link :underline="false" type="info">首次阅读需要输入阅读码</el-link>
-        <img class="qrcode" src="../../assets/images/qrcode.jpg" alt="">
+        <img class="qrcode" src="../../assets/images/planetQRcode.jpg" alt="">
         <div v-if="readCode">
           <el-link :underline="false" type="info">点击复制阅读码</el-link>
           <br>
           <el-tag type="info" class="martop-20" @click="cloneCode"
-                     v-clipboard:copy="readCode"
-                     v-clipboard:success="onCopy"
-                     >
+                  v-clipboard:copy="readCode"
+                  v-clipboard:success="onCopy"
+          >
             <strong>{{readCode}}</strong>
           </el-tag>
         </div>
       </div>
     </el-dialog>
 
-<!-- 选择菜单 -->
+    <!-- 选择菜单 -->
     <el-dialog custom-class="menu" :title="menu.name" width="100%" :show-close="false" :visible.sync="dialogTableVisible">
       <div class="menu-list">
         <div class="li" v-for="(item,index) in setMeal"
@@ -83,18 +92,21 @@
              @click="chooseMenu(index)">
           {{item.number}}本 <span class="pull-right">￥{{item.price}}</span>
         </div>
-        <div class="li"
-             @click="chooseMenu(-1)"
-             :class="checkedMenu=== -1  ?'active':''"
-        >
-          自定义:
-          <el-input type="number" @focus="tradeCountFocus" @input="diyTradeCount"
-                    class="input-inline" v-model="diyNumber" placeholder="请输入数字"></el-input>
-          <span class="pull-right">￥{{ diyPrice }}</span>
-        </div>
+<!--        <div class="li"-->
+<!--             @click="chooseMenu(-1)"-->
+<!--             :class="checkedMenu=== -1  ?'active':''"-->
+<!--        >-->
+<!--          自定义:-->
+<!--          <el-input type="number" @focus="tradeCountFocus" @input="diyTradeCount"-->
+<!--                    class="input-inline" v-model="diyNumber" placeholder="请输入数字"></el-input>-->
+<!--          <span class="pull-right">￥{{ diyPrice }}</span>-->
+<!--        </div>-->
       </div>
       <div class="title-warp">
-        <el-button class="btn" @click="buy()" v-loading.fullscreen.lock="payDisable" >付款</el-button>
+        <el-button class="btn" @click="buy(menu._id)"
+                   :disabled = "checkedMenu === null"
+                   v-loading.fullscreen.lock="payDisable"
+        >付款</el-button>
       </div>
     </el-dialog>
 
@@ -106,7 +118,7 @@
   import axios from 'axios';
   import {loginByCode,getBanner,userBuy,userRecord,getUserInfoByWechat} from '../../api'
 
-  var isDev = true;//发布是时候需要改成 false
+  var isDev = false;//发布是时候需要改成 false
 
   export default {
     name: "pay",
@@ -118,17 +130,18 @@
         payDisable:false,//支付按钮是否失效（防止重复下单)
         paySuccess:false,//成功购买后弹框
         readCode:'',//
+        userinfo:{},//用户信息
 
         magazine:[],menu: {},
         userBuyList:[],//存放购买过的单
         dialogTableVisible:false,
-        checkedMenu: 0,//选中的套餐 第几个
+        checkedMenu: null,//选中的套餐 第几个
         setMeal: [
-          { number: '1', price: '6.00' },
-          { number: '10', price: '60.00' },
-          { number: '100', price: '600.00' },
+          { number: '1', price: '8.00' },
+          { number: '10', price: '80.00' },
+          { number: '100', price: '800.00' },
         ],
-        order:{number: '1', price: '6.00' },
+        order:{number: '1', price: '8.00' },
         diyNumber:1,diyPrice:6,
 
 
@@ -154,6 +167,10 @@
       }
     },
     methods: {
+      clearLocalStorge(){
+        localStorage.removeItem('token');
+        window.location.reload();
+      },
       handleTabClick(tab, event) {
         console.log(tab, event);
         if(tab.name ==="code"){
@@ -178,6 +195,9 @@
       },
       diyTradeCount(val){
         var price = this.singlePrice;
+        if(val<1)val=1;
+        console.log(val)
+        val = Math.ceil(val);
         let tradePrice = val*price,discount = this.menu.discount||1;
         if(val>300)tradePrice = tradePrice * discount;
         if(tradePrice >= 3000){
@@ -205,12 +225,12 @@
       config() {
         let url = location.href.split('?')[0];
         console.log('当前url是：', url);
-        axios.get('https://wechat.studiosortie.com/commit/config?url=' + url)
+        axios.get('https://wechat.planetofficial.cn/client/wechatConfig?url=' + url)
           .then((res) => {
             console.log('config', res)
             wx.config({
               debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-              appId: 'wx9df6ee154c684395', // 必填，公众号的唯一标识
+              appId: 'wxb373346dd4ebbb8a', // 必填，公众号的唯一标识
               timestamp: res.data.timestamp, // 必填，生成签名的时间戳
               nonceStr: res.data.nonceStr, // 必填，生成签名的随机串
               signature: res.data.signature,// 必填，签名
@@ -228,18 +248,18 @@
               });
               //分享给朋友
               wx.updateAppMessageShareData({
-                title: 'Sortie电子刊', // 分享标题
-                desc: '欢迎阅读最新的Sortie电子刊', // 分享描述
-                link: 'http://www.studiosortie.com/pay', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                title: 'Planet电子刊', // 分享标题
+                desc: '欢迎阅读最新的Planet电子刊', // 分享描述
+                link: 'http://www.studioPlanet.com/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
                 imgUrl: '', // 分享图标
                 success: function () {
                   // 设置成功
                 }
               })
-            //  分享到朋友圈
+              //  分享到朋友圈
               wx.updateTimelineShareData({
-                title: 'Sortie电子刊', // 分享标题
-                link: 'http://www.studiosortie.com/pay', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                title: 'Planet电子刊', // 分享标题
+                link: 'http://www.studioPlanet.com/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
                 imgUrl: '', // 分享图标
                 success: function () {
                   // 设置成功
@@ -253,7 +273,7 @@
         });
 
       },
-      buy() {
+      buy(magazineId) {
         if(this.payDisable){return;}//防止重复下单
         this.payDisable = true;
         const self = this;
@@ -261,10 +281,10 @@
         let tradeCount = this.checkedMenu === -1 ? this.diyNumber : this.order.number;
         let tradebody = this.menu.name;
 
-        axios.get('https://wechat.studiosortie.com/wxPurchase',
+        axios.get('https://wechat.planetofficial.cn/client/wxPurchase',
           {
             params: {
-              magazine: '5f0aaaba7c27ba61a46d253f',
+              magazine: magazineId,
               amount: amount,
               tradeCount: tradeCount,
               tradeBody: tradebody,
@@ -280,7 +300,7 @@
               out_trade_no = data.data.out_trade_no;
             self.readCode = data.data.readCode;
 
-              wx.chooseWXPay({
+            wx.chooseWXPay({
               timestamp: paydatas.timeStamp.toString(), // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
               nonceStr: paydatas.nonceStr, // 支付签名随机串，不长于 32 位
               package: "prepay_id=" + paydatas.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
@@ -291,7 +311,7 @@
                 // res.errMsg === 'chooseWXPay:ok'方式判断前端返回,微信团队郑重提示：
                 // res.errMsg将在用户支付成功后返回ok，但并不保证它绝对可靠， 切记。
                 // if (res.errMsg === 'chooseWXPay:ok') {
-                 self.paySuccess = true; //成功购买后弹框
+                self.paySuccess = true; //成功购买后弹框
                 // }
                 console.log('支付成功后的回调函数', res);
                 // alert('支付成功后的回调函数', res.toString());
@@ -311,7 +331,7 @@
                 self.payDisable = false;
               },
               complete:function () {
-              //完成时候回调
+                //完成时候回调
                 console.log('//完成时候回调');
                 self.payDisable = false;
                 self.dialogTableVisible = false;
@@ -327,25 +347,28 @@
       getUserBuy(){
         userBuy({token:this.foowwLocalStorage.get("token")}).then(res=>{
           console.log('userBuy:',res);
-          this.userBuyList = res.data;
+          this.userBuyList = res.data.reverse();
         })
       }
     },
     mounted() {
+      var self =this;
       //如果带有code，则是登录获取token
-      var auth_url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9df6ee154c684395&redirect_uri='
+      var auth_url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxb373346dd4ebbb8a&redirect_uri='
         + encodeURIComponent(location.href.split('?')[0]) + '&response_type=code&scope=snsapi_userinfo&state=fuwu#wechat_redirect';
 
       if (this.$route.query.code && !this.foowwLocalStorage.get("token") ){
-       loginByCode({code:this.$route.query.code,state:'web'}).then(res=>{
+        loginByCode({code:this.$route.query.code,state:'web'}).then(res=>{
           console.log('loginBycode:',res);
           if(res.status === 1){
             getUserInfoByWechat({openid:res.openid,access_token:res.access_token}).then(res=>{
               console.log('getUserInfoByWechat',res);
+              self.userinfo = res.userInfo
+              localStorage.setItem('userinfo',JSON.stringify(res.userInfo));
             })
-          //  获取token成功
+            //  获取token成功
             var date = new Date().getTime();
-            this.foowwLocalStorage.set('token',res.token,date+(1000*60*60*4) )//4小时过期
+            // this.foowwLocalStorage.set('token',res.token,date+(1000*60*60*1) )//1小时过期
             //登录完成后初始化 config
             axios.defaults.headers.common['Authorization'] = res.token;
             this.config();
@@ -358,12 +381,17 @@
       else if( !this.foowwLocalStorage.get("token") ){
         //本地测试中需要关闭
         !isDev && window.location.replace(auth_url); //本地测试中需要关闭
-     }
+      }
       else {
         axios.defaults.headers.common['Authorization'] = this.foowwLocalStorage.get("token");
         this.config();
         this.getUserBuy();//获取购买记录
 
+      }
+
+      if(localStorage.getItem('userinfo')){
+        var userinfo = JSON.parse(localStorage.getItem('userinfo'));
+        this.userinfo = userinfo;
       }
 
 
@@ -378,7 +406,7 @@
         console.log(this.magazine )
         this.$forceUpdate();
       })
-    }
+    },
   }
 
   const foowwLocalStorage = {
@@ -401,9 +429,9 @@
 </script>
 
 <style scoped>
-
-  .body{padding-top: 20px;}
-  .logo{margin: 20px 0;}
+  /deep/.el-tabs{height: calc(100vh - 55px);}
+  /deep/ .el-tabs__content{height:calc(100vh - 135px);overflow-y: scroll;}
+  .logo{margin: 20px 0;width: 50px;}
   .page{min-height: 98vh;display: flex;flex-direction: column;justify-content: center;}
   .box{box-sizing: border-box;display: flex;
     justify-content: center;align-items: center;text-align: center;}
@@ -445,9 +473,12 @@
   .flex{align-items:stretch;}
   .btn-pad{padding: 5px 15px;}
   .btn-pad:last-child{margin-right: 0;}
+  .user-info{display: flex;flex-direction: column;justify-items: center;align-items: center;padding: 20px 0;
+    margin-bottom: 20px;border-bottom: 1px solid #eee;}
+  .headImg{width: 100px;height: 100px;border-radius: 150px;}
 
   /* 加载动画 */
-  .loading-cover{display: flex;justify-content: center;transition:all .6;flex-direction: column;align-items: center;width: 100%;height: 100vh;position: fixed;z-index: 98;background: white;}
+  .loading-cover{display: flex;justify-content: center;transition:all .6s;flex-direction: column;align-items: center;width: 100%;height: 100vh;position: fixed;z-index: 98;background: white;}
   .loading-cover.hide{animation: hide .55s .2s 1 ease-out forwards;}
   @keyframes hide{
     0%{opacity: 1;}
@@ -472,7 +503,7 @@
     margin: 0;
     position:fixed;bottom: 0;left: 0;right: 0;
   }
-.menu-list{text-align: left;font-size: 18px;}
+  .menu-list{text-align: left;font-size: 18px;}
   .menu-list .li{
     padding: 15px 10px;border-bottom: 1px #eee solid;margin-bottom: 15px;transition: all .35s;
 
@@ -486,7 +517,7 @@
     border-top: 2px #eee solid;
   }
   .item-list{
-    padding: 15px;border-radius: 4px;background: #eee;margin:15px 20px;
+    border-radius: 4px;background: #eee;margin:15px 20px;
   }
   .flex-row{
     display: flex;justify-content: flex-start;align-items: stretch;
@@ -496,7 +527,7 @@
     display: flex;justify-content: space-between;flex-direction: column;
   }
   .item-list .flex-col{
-    align-items: flex-start;
+    align-items: flex-start;padding: 20px 0;padding-right:10px;box-sizing: border-box;
   }
 
   .btn-black{
@@ -506,12 +537,11 @@
     background: #cf9236;color: white;
   }
   .poster-md{
-    width: 130px;margin-right: 20px;
-    max-height: 171px;
+    margin-right: 20px;width: 150px;height: 190px;
   }
 
   /deep/ .payDialog .el-dialog__header{
-  display: none;
+    display: none;
   }
   /deep/ .payDialog{
     border-radius: 10px;width: 80%;
@@ -537,3 +567,4 @@
   .date{margin-right: 16px;font-family:serif,-webkit-pictograph;}
 
 </style>
+
