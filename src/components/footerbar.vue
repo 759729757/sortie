@@ -22,7 +22,9 @@
         <div class="text-center footer-bg">
           Copyright©2020-2025 studiosortie.com All rights reserved 版权所有 <br>
           <img width="20" data-src="//img.alicdn.com/tfs/TB1..50QpXXXXX7XpXXXXXXXXXX-40-40.png" class="ali-report-img" src="//img.alicdn.com/tfs/TB1..50QpXXXXX7XpXXXXXXXXXX-40-40.png">
-          浙ICP备20022161号-1
+          <a href="http://www.beian.gov.cn/portal/registerSystemInfo?spm=5176.12901015.7y9jhqsfz.28.609b525c29NqJe" style="color: #999;" target="_parent">
+            浙ICP备20022161号-1
+          </a>
         </div>
       </div>
     </div>

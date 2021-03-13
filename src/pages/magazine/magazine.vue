@@ -19,7 +19,7 @@
       title="微信扫一扫购买阅读码"
       :visible.sync="dialogVisible"
       width="30%">
-      <img src="../assets/payQrcode.png" alt="">
+      <img src="../../assets/payQrcode.png" alt="">
     </el-dialog>
 
     <Footerbar></Footerbar>
@@ -27,9 +27,9 @@
 </template>
 
 <script>
-  import News from '../components/news'
-  import {getMagazine} from '../api'
-  import Footerbar from '../components/footerbar'
+  import News from '../../components/news'
+  import {getMagazine} from '../../api'
+  import Footerbar from '../../components/footerbar'
 
     export default {
       name: "newsPage",

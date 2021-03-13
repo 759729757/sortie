@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import Footerbar from '../components/footerbar'
+  import Footerbar from '../../components/footerbar'
   import {Swiper, SwiperSlide} from "vue-awesome-swiper";
 
 
