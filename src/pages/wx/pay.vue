@@ -30,7 +30,11 @@
             <small class="text-left">
               已有 {{item.sold}} 人订阅
             </small>
-            <div class="btn btn-black" @click="showMenu(item)" >点击购买</div>
+            <div>
+              <div class="btn btn-black" @click="showMenu(item)" >点击购买</div>
+              <div v-if="item._id=='60366c172cdd073cc82c4ff2' && debug" class="btn btn-black" @click="showZb(item)" >周边</div>
+
+            </div>
           </div>
         </div>
       </el-tab-pane>
@@ -50,7 +54,7 @@
             <el-link :underline="false" type="primary">{{item.readCode}}</el-link>
             <div class="text-sm">可用：{{item.tradeCount}} 已用：{{item.readCodeUsed}}</div>
             <div class="">
-              <div class="btn btn-black btn-pad" @click="readCode=item.readCode;paySuccess=true">阅读</div>
+              <div class="btn btn-black btn-pad" @click="readCode=item.readCode;paySuccess=true;">阅读</div>
               <el-tag type="info" class="martop-20" @click="cloneCode"
                       v-clipboard:copy="item.readCode"
                       v-clipboard:success="onCopy"
@@ -82,6 +86,12 @@
           </el-tag>
         </div>
       </div>
+    </el-dialog>
+
+    <!-- 周边弹框 -->
+    <el-dialog custom-class="zhoubian" center title="肖宇梁 官方授权实体周边" width="100%" :show-close="false" :visible.sync="isShowZb">
+      <el-link href="https://weidian.com/item.html?itemID=4318971398" type="primary">肖宇梁 Double Universe 官方海报</el-link>
+      <el-link v-if="zbBuy >= 30" href="https://weidian.com/item.html?itemID=4319156412" type="primary">肖宇梁 专属别册/肖宇梁个人首本官方授权实体册</el-link>
     </el-dialog>
 
     <!-- 选择菜单 -->
@@ -124,8 +134,12 @@
     name: "pay",
     data() {
       return {
+        debug:false,
         activeTabName:'all',
         imgUrl:'https://wechat.planetofficial.cn/images/magazines/',
+
+        isShowZb:false,//显示周边链接弹框
+        zbBuy:0,//符合周边电子刊的购买的数量
 
         payDisable:false,//支付按钮是否失效（防止重复下单)
         paySuccess:false,//成功购买后弹框
@@ -183,6 +197,9 @@
           message: '成功复制阅读码，请到小程序中使用',
           type: 'success'
         });
+      },
+      showZb(){
+        this.isShowZb = true;
       },
       chooseMenu(val){
         this.checkedMenu = val;
@@ -347,11 +364,21 @@
       getUserBuy(){
         userBuy({token:this.foowwLocalStorage.get("token")}).then(res=>{
           console.log('userBuy:',res);
-          this.userBuyList = res.data.reverse();
+          var userBuyList = res.data.reverse();
+          this.userBuyList = userBuyList;
+          for (var i =0 ;i<userBuyList.length;i++){
+            if(userBuyList[i].magazine._id === "60366c172cdd073cc82c4ff2"){
+              this.zbBuy =this.zbBuy + Number(userBuyList[i].tradeCount);
+            }
+          }
         })
       }
     },
     mounted() {
+      this.debug = sessionStorage.getItem('debug');//调试需要，可以设置debug开关
+      if(new Date().valueOf() > 1615651190000){ //到日期了也可以打开调试开关
+        this.debug = true;
+      }
       var self =this;
       //如果带有code，则是登录获取token
       var auth_url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxb373346dd4ebbb8a&redirect_uri='
@@ -365,6 +392,7 @@
               console.log('getUserInfoByWechat',res);
               self.userinfo = res.userInfo
               localStorage.setItem('userinfo',JSON.stringify(res.userInfo));
+              self.getUserBuy();
             })
             //  获取token成功
             var date = new Date().getTime();
@@ -374,7 +402,6 @@
             this.config();
           }else{
             !isDev && window.location.replace(auth_url); //本地测试中需要关闭
-
           }
         })
       }
@@ -394,8 +421,6 @@
         this.userinfo = userinfo;
       }
 
-
-      console.log('进入购买页面')
       getBanner().then((res) => {
         console.log('getMagazine',res.data);
         this.magazine = res.data;
@@ -426,6 +451,12 @@
       return null;
     }
   }
+  // 6043af306066c00d5801f269
+  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcGVuaWQiOiJvMjV1WXYxaGpER0V1NWR0ek44eERPYW43V0JJIiwiX2lkIjoiNWY2MDU2MDk0ZTYwZGQxYWY0ODU0OTdlIiwiYWNjZXNzX3Rva2VuIjoiNDNfMWpEQ3RlSVM4UWZjV0RaT19sMjBYbDc5TlcwRzJybS1jTzBuQlNGcVdGekVPYkFnQXp4WE03TEIyT19ac0F2QVl4RDI3MXZGbU1EN2U3TDJsSERjamciLCJpYXQiOjE2MTU2NTQxNDcsImV4cCI6MTYxNTY2ODU0N30.V4xoGffaVuJcQsjVA3TL7wkpSY6O9kQsdEclazPnP70
+  // 5f6056094e60dd1af485497e
+  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcGVuaWQiOiJvMjV1WXYxaGpER0V1NWR0ek44eERPYW43V0JJIiwiX2lkIjoiNWY2MDU2MDk0ZTYwZGQxYWY0ODU0OTdlIiwiYWNjZXNzX3Rva2VuIjoiNDNfMWpEQ3RlSVM4UWZjV0RaT19sMjBYbDc5TlcwRzJybS1jTzBuQlNGcVdGekVPYkFnQXp4WE03TEIyT19ac0F2QVl4RDI3MXZGbU1EN2U3TDJsSERjamciLCJpYXQiOjE2MTU2NTQxNDcsImV4cCI6MTYxNTY2ODU0N30.V4xoGffaVuJcQsjVA3TL7wkpSY6O9kQsdEclazPnP70
+  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcGVuaWQiOiJvMjV1WXYxaGpER0V1NWR0ek44eERPYW43V0JJIiwiX2lkIjoiNWY2MDU2MDk0ZTYwZGQxYWY0ODU0OTdlIiwiYWNjZXNzX3Rva2VuIjoiNDNfcko3Y0dkZGtnUVlzOVlhODhZekdtZ3ZzbFRRNW5tQUROaHdMQXQ1cE9qTlY1M2VfMEowN3ZnR1MwZ2doMlNIcjBOa2QwZ1ZxQmFfQU15NFZiOFpVX0EiLCJpYXQiOjE2MTU2NTYyODUsImV4cCI6MTYxNTY3MDY4NX0.B6zr4bzJ8OCTfPTEHuYy6vC4NDcNZWH2KEJfHqF50Ag
+  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcGVuaWQiOiJvMjV1WXYxaGpER0V1NWR0ek44eERPYW43V0JJIiwiX2lkIjoiNWY2MDU2MDk0ZTYwZGQxYWY0ODU0OTdlIiwiYWNjZXNzX3Rva2VuIjoiNDNfcko3Y0dkZGtnUVlzOVlhODhZekdtZ3ZzbFRRNW5tQUROaHdMQXQ1cE9qTlY1M2VfMEowN3ZnR1MwZ2doMlNIcjBOa2QwZ1ZxQmFfQU15NFZiOFpVX0EiLCJpYXQiOjE2MTU2NTYyODUsImV4cCI6MTYxNTY3MDY4NX0.B6zr4bzJ8OCTfPTEHuYy6vC4NDcNZWH2KEJfHqF50Ag
 </script>
 
 <style scoped>
@@ -503,6 +534,11 @@
     margin: 0;
     position:fixed;bottom: 0;left: 0;right: 0;
   }
+  /deep/ .zhoubian{
+    margin: 0;
+    position:fixed;left: 0;right: 0;top: 50%;transform: translateY(-50%);
+    margin-top:0!important;
+  }
   .menu-list{text-align: left;font-size: 18px;}
   .menu-list .li{
     padding: 15px 10px;border-bottom: 1px #eee solid;margin-bottom: 15px;transition: all .35s;
@@ -565,6 +601,7 @@
   }
   .text-sm{font-size: 12px;}
   .date{margin-right: 16px;font-family:serif,-webkit-pictograph;}
+
 
 </style>
 
