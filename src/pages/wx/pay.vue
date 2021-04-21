@@ -83,15 +83,15 @@
              @click="chooseMenu(index)">
           {{item.number}}本 <span class="pull-right">￥{{item.price}}</span>
         </div>
-        <div class="li"
-             @click="chooseMenu(-1)"
-             :class="checkedMenu=== -1  ?'active':''"
-        >
-          自定义:
-          <el-input type="number" @focus="tradeCountFocus" @input="diyTradeCount"
-                    class="input-inline" v-model="diyNumber" placeholder="请输入数字"></el-input>
-          <span class="pull-right">￥{{ diyPrice }}</span>
-        </div>
+<!--        <div class="li"-->
+<!--             @click="chooseMenu(-1)"-->
+<!--             :class="checkedMenu=== -1  ?'active':''"-->
+<!--        >-->
+<!--          自定义:-->
+<!--          <el-input type="number" @focus="tradeCountFocus" @input="diyTradeCount"-->
+<!--                    class="input-inline" v-model="diyNumber" placeholder="请输入数字"></el-input>-->
+<!--          <span class="pull-right">￥{{ diyPrice }}</span>-->
+<!--        </div>-->
       </div>
       <div class="title-warp">
         <el-button class="btn" @click="buy()" v-loading.fullscreen.lock="payDisable" >付款</el-button>
@@ -326,7 +326,7 @@
       getUserBuy(){
         userBuy({token:this.foowwLocalStorage.get("token")}).then(res=>{
           console.log('userBuy:',res);
-          this.userBuyList = res.data;
+          this.userBuyList = res.data.filter(item => item.magazine !== null);
         })
       }
     },
