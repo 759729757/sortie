@@ -224,7 +224,6 @@
 
       config() {
         let url = location.href.split('?')[0];
-        console.log('当前url是：', url);
         axios.get('https://wechat.planetofficial.cn/client/wechatConfig?url=' + url)
           .then((res) => {
             console.log('config', res)
@@ -345,7 +344,11 @@
       },
 
       getUserBuy(){
-        userBuy({token:this.foowwLocalStorage.get("token")}).then(res=>{
+        userBuy(
+          {
+            token: this.foowwLocalStorage.get("token"),
+            _: new Date().valueOf()
+          }).then(res=>{
           console.log('userBuy:',res);
           this.userBuyList = res.data.reverse();
         })
@@ -368,7 +371,7 @@
             })
             //  获取token成功
             var date = new Date().getTime();
-            // this.foowwLocalStorage.set('token',res.token,date+(1000*60*60*1) )//1小时过期
+            this.foowwLocalStorage.set('token',res.token,date+(1000*60*60*4) )//1小时过期
             //登录完成后初始化 config
             axios.defaults.headers.common['Authorization'] = res.token;
             this.config();
