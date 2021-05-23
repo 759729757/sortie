@@ -22,7 +22,9 @@
     <!--    </div>-->
 
     <el-tabs v-model="activeTabName" tab-position="bottom" @tab-click="handleTabClick">
-      <el-tab-pane label="全部" name="all">
+      <el-tab-pane label="全部" name="all" v-infinite-scroll="scrollWarp"
+             infinite-scroll-disabled="busy"
+             infinite-scroll-distance="100">
         <div v-for="item in magazine" class="flex-row item-list">
           <img class="poster-md" :src="imgUrl+item.magazineNum+'/'+item.subHeadImg[0]" >
           <div class="flex flex-col">
@@ -116,12 +118,16 @@
 <script>
   import wx from 'weixin-js-sdk';
   import axios from 'axios';
-  import {loginByCode,getBanner,userBuy,userRecord,getUserInfoByWechat} from '../../api'
+  import {loginByCode,getBanner,userBuy,userRecord,getUserInfoByWechat,getMagazine} from '../../api'
+  import infiniteScroll from 'vue-infinite-scroll'
 
   var isDev = false;//发布是时候需要改成 false
 
   export default {
     name: "pay",
+    directives: {
+      infiniteScroll
+    },
     data() {
       return {
         activeTabName:'all',
@@ -143,6 +149,11 @@
         ],
         order:{number: '1', price: '8.00' },
         diyNumber:1,diyPrice:6,
+        busy:true,
+        filter:{
+          page:1
+        },
+        isEnd:false,
 
 
         //设置缓存的对象
@@ -167,6 +178,12 @@
       }
     },
     methods: {
+      scrollWarp(e){
+        console.log('触底更新');
+        if(!this.isEnd){
+          this.getData();
+        }
+      },
       clearLocalStorge(){
         localStorage.removeItem('token');
         window.location.reload();
@@ -342,7 +359,26 @@
           self.payDisable = false;
         });
       },
-
+      getData(){
+        this.busy = true;
+        getMagazine({
+          page: this.filter.page
+        }).then((res) => {
+          console.log('getMagazine',res.data);
+          if(!res.data.length){
+            this.isEnd = true;
+            return false;
+          }
+          this.filter.page ++;
+          this.magazine = this.magazine.concat(res.data);
+          this.diyPrice = res.data[0].price;
+          console.log(this.magazine )
+          this.$forceUpdate();
+          setTimeout(() => {            
+            this.busy = false;
+          }, 100);
+        })
+      },
       getUserBuy(){
         userBuy(
           {
@@ -397,18 +433,7 @@
         this.userinfo = userinfo;
       }
 
-
-      console.log('进入购买页面')
-      getBanner().then((res) => {
-        console.log('getMagazine',res.data);
-        this.magazine = res.data;
-        this.diyPrice = res.data[0].price;
-        this.setMeal[0].price = this.setMeal[0].number * this.diyPrice;
-        this.setMeal[1].price = this.setMeal[1].number * this.diyPrice;
-        this.setMeal[2].price = this.setMeal[2].number * this.diyPrice;
-        console.log(this.magazine )
-        this.$forceUpdate();
-      })
+      this.getData();
     },
   }
 
