@@ -2,7 +2,7 @@
   <div>
     <div class="banner-warp container">
       <swiper ref="mySwiper" :options="swiperOptions">
-        <swiper-slide v-for="item in banner">
+        <swiper-slide v-for="(item, index) in banner" :key="index">
           <div>
             <router-link to="magazine">
               <p>

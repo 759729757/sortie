@@ -18,6 +18,9 @@ export const findNewsByName = params => { return axios.get(`${_base}/findNewsByN
 
 export const userBuy = params => { return axios.get(`${_base}/userBuy` ,{params:params}).then(res=>res.data); };
 export const userRecord = params => { return axios.get(`${_base}/userRecord` ,{params:params}).then(res=>res.data); };
+// 用户地址
+export const updateUserAddress = params => { return axios.post(`${_base}/updateUserAddress`, params).then(res=>res.data); };
+export const userAddress = params => { return axios.get(`${_base}/userAddress` ,{params:params}).then(res=>res.data); };
 
 
 

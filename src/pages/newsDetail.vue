@@ -8,7 +8,7 @@
       <br>
       <div class="clear content " v-if="newsData.swiper.length>0">
         <swiper ref="mySwiper" class="swiper" :options="swiperOptions">
-          <swiper-slide v-for="item in newsData.swiper">
+          <swiper-slide v-for="(item, index) in newsData.swiper" :key="index">
             <div>
               <p>
                 <img :src="item" alt=""  />

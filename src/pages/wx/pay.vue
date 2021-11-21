@@ -1,7 +1,6 @@
 <template>
   <div class="body">
     <img class="logo" src="../../assets/images/watermark.png" alt="">
-
     <!--    <img class="logo" src="../../assets/images/logo.jpg" alt="">-->
     <!--    <div v-for="item in magazine" :key="item.name">-->
     <!--      <div class='box'>-->
@@ -25,7 +24,7 @@
       <el-tab-pane label="全部" name="all" v-infinite-scroll="scrollWarp"
              infinite-scroll-disabled="busy"
              infinite-scroll-distance="100">
-        <div v-for="item in magazine" class="flex-row item-list">
+        <div v-for="item in magazine" :key="item.magazineNum" class="flex-row item-list">
           <img class="poster-md" :src="imgUrl+item.magazineNum+'/'+item.subHeadImg[0]" >
           <div class="flex flex-col">
             <h4 class="text-left"><strong>{{item.name}}</strong></h4>
@@ -42,10 +41,11 @@
           <img class="headImg" :src="userinfo.headimgurl" alt="">
           <h4 style="text-align: center;">{{userinfo.nickname}}</h4>
           <el-link type="info" @click="clearLocalStorge">更新用户信息</el-link>
+          <el-link type="primary" @click="addrDrawer = true">我的地址</el-link>
         </div>
 
         <h2 v-if="!userBuyList" style="padding-top: 30%;font-size: 20px;">您还没有购买过哦</h2>
-        <div v-for="item in userBuyList" class="flex-row item-list">
+        <div v-for="item in userBuyList" :key="item.magazine.name" class="flex-row item-list">
           <img class="poster-md" :src="imgUrl+item.magazine.magazineNum+'/'+item.magazine.subHeadImg[0]" >
           <div class="flex flex-col">
             <h4 class="text-left"><strong>{{item.magazine.name}}</strong></h4>
@@ -89,7 +89,7 @@
     <!-- 选择菜单 -->
     <el-dialog custom-class="menu" :title="menu.name" width="100%" :show-close="false" :visible.sync="dialogTableVisible">
       <div class="menu-list">
-        <div class="li" v-for="(item,index) in setMeal"
+        <div class="li" v-for="(item,index) in setMeal" :key="index"
              :class="checkedMenu===index ? 'active':''"
              @click="chooseMenu(index)">
           {{item.number}}本 <span class="pull-right">￥{{item.price}}</span>
@@ -111,6 +111,19 @@
         >付款</el-button>
       </div>
     </el-dialog>
+    <!-- 地址输入框 -->
+    <el-drawer
+      title="收货地址（接收活动送出的明星周边等）"
+      size="500"
+      :show-close="false"
+      :wrapperClosable="false"
+      :visible.sync="addrDrawer"
+      direction="btt"
+      >
+      <div class="address-warp">
+        <citybox @cancel="cancelAddress" @submit="postAddress" />
+      </div>
+    </el-drawer>
 
   </div>
 </template>
@@ -118,18 +131,24 @@
 <script>
   import wx from 'weixin-js-sdk';
   import axios from 'axios';
-  import {loginByCode,getBanner,userBuy,userRecord,getUserInfoByWechat,getMagazine} from '../../api'
-  import infiniteScroll from 'vue-infinite-scroll'
+  import {updateUserAddress, loginByCode,getBanner,userBuy,userRecord,getUserInfoByWechat,getMagazine} from '../../api'
+  import infiniteScroll from 'vue-infinite-scroll';
+  import citybox from "@/components/citybox";
 
   var isDev = false;//发布是时候需要改成 false
 
   export default {
     name: "pay",
+    components: {
+      citybox: citybox
+    },
     directives: {
       infiniteScroll
     },
     data() {
       return {
+        // 显示编辑地址
+        addrDrawer: false,
         activeTabName:'all',
         imgUrl:'https://wechat.planetofficial.cn/images/magazines/',
 
@@ -178,8 +197,25 @@
       }
     },
     methods: {
+      // 提交地址数据
+      postAddress(addressInfo) {
+        console.log('add', addressInfo);
+        updateUserAddress(addressInfo).then(res =>{
+          console.log('提交成功！', res);
+				  this.$message.success('提交成功！');
+          this.addrDrawer = false;
+        })
+      },
+      // 取消添加地址
+      cancelAddress() {
+        this.addrDrawer = false;
+        // this.$confirm('是否取消添加地址？')
+        //   .then(_ => {
+        //     this.addrDrawer = false;
+        //   })
+        //   .catch(_ => {});
+      },
       scrollWarp(e){
-        console.log('触底更新');
         if(!this.isEnd){
           this.getData();
         }
@@ -332,6 +368,10 @@
                 console.log('支付成功后的回调函数', res);
                 // alert('支付成功后的回调函数', res.toString());
                 self.payDisable = false;
+                // 购买本数大于10本 弹出地址框
+                if(this.order.number >= 10){
+                  this.addrDrawer = true;
+                }
               },
               // 支付取消回调函数
               cencel: function (res) {
@@ -593,6 +633,10 @@
   }
   .text-sm{font-size: 12px;}
   .date{margin-right: 16px;font-family:serif,-webkit-pictograph;}
-
+  .address-warp{
+    padding-bottom: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 </style>
 
