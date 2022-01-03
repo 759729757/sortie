@@ -52,7 +52,7 @@
             <el-link :underline="false" type="primary">{{item.readCode}}</el-link>
             <div class="text-sm">可用：{{item.tradeCount}} 已用：{{item.readCodeUsed}}</div>
             <div class="">
-              <div class="btn btn-black btn-pad" @click="readCode=item.readCode;paySuccess=true">阅读</div>
+              <div class="btn btn-black btn-pad" @click="showReadDialog(item)">阅读</div>
               <el-tag type="info" class="martop-20" @click="cloneCode"
                       v-clipboard:copy="item.readCode"
                       v-clipboard:success="onCopy"
@@ -67,7 +67,7 @@
     </el-tabs>
 
     <!--    支付成功弹框-->
-    <el-dialog :show-close="false" :visible.sync="paySuccess" custom-class="payDialog">
+    <el-dialog :show-close="false" :visible.sync="paySuccess" @close="closePayDialog" custom-class="payDialog">
       <div>
         <img class="pay-logo" src="../../assets/images/watermark.png" >
         <el-link :underline="false" type="info">长按识别小程序码</el-link>
@@ -82,6 +82,12 @@
           >
             <strong>{{readCode}}</strong>
           </el-tag>
+        </div>
+        <!-- 符合购买资格跳转到微店 -->
+        <div v-if="showWeShowDialog">
+          您已符合PLANET纪念品购买资格，请点击下方链接跳转至微店 <br>
+          <el-link type="primary" style="margin-top:20px;"
+           :href="weShopUrl" icon="el-icon-share">{{weShopName}}</el-link>
         </div>
       </div>
     </el-dialog>
@@ -147,6 +153,13 @@
     },
     data() {
       return {
+        // 显示微店购买地址
+        showWeShowDialog: false,
+        // 显示微店名
+        weShopName: '',
+        weShopUrl: '',
+        // 微店购买门槛
+        weShopShownum: '',
         // 显示编辑地址
         addrDrawer: false,
         activeTabName:'all',
@@ -164,6 +177,7 @@
         setMeal: [
           { number: '1', price: '8.00' },
           { number: '10', price: '80.00' },
+          { number: '30', price: '240.00' },
           { number: '100', price: '800.00' },
         ],
         order:{number: '1', price: '8.00' },
@@ -173,7 +187,8 @@
           page:1
         },
         isEnd:false,
-
+        // 购买记录统计
+        statisticsRecord: [],
 
         //设置缓存的对象
         foowwLocalStorage : {
@@ -197,6 +212,26 @@
       }
     },
     methods: {
+      closePayDialog(){
+        console.log('asdsd')
+        this.showWeShowDialog = false;
+        this.weShopName = '';
+        this.weShopShownum = '';
+        this.weShopUrl = '';
+      },
+      showReadDialog(item) {
+        this.readCode=item.readCode;
+        this.paySuccess=true;
+        if(item.magazine.weShopShownum){
+          var magazine = item.magazine;
+          this.weShopName = magazine.weShopName;
+          this.weShopShownum = magazine.weShopShownum;
+          this.weShopUrl = magazine.weShopUrl;
+          if(this.statisticsRecord[magazine._id].tradeCount >= magazine.weShopShownum) {
+            this.showWeShowDialog = true;
+          };
+        }
+      },
       // 提交地址数据
       postAddress(addressInfo) {
         console.log('add', addressInfo);
@@ -264,7 +299,6 @@
         this.$forceUpdate();
       },
       showMenu(item){
-        console.log('show menu',item);
         var price = item.price;
         this.singlePrice = price;
         //设置价格
@@ -272,6 +306,10 @@
           item.price = (item.number*price).toFixed(2)
         })
         this.menu = item;
+        this.weShopName = item.weShopName;
+        this.weShopShownum = item.weShopShownum;
+        this.weShopUrl = item.weShopUrl;
+        console.log('show menu',item);
         this.dialogTableVisible = true;
       },
 
@@ -369,8 +407,11 @@
                 // alert('支付成功后的回调函数', res.toString());
                 self.payDisable = false;
                 // 购买本数大于10本 弹出地址框
-                if(this.order.number >= 10){
+                if(tradeCount >= 10){
                   this.addrDrawer = true;
+                }
+                if(tradeCount >= this.weShopShownum){
+                  this.showWeShowDialog = true;
                 }
               },
               // 支付取消回调函数
@@ -426,8 +467,32 @@
             _: new Date().valueOf()
           }).then(res=>{
           console.log('userBuy:',res);
-          this.userBuyList = res.data.reverse();
+          var buyList = res.data.reverse();
+          this.statistics(buyList);
+          this.userBuyList = buyList;
         })
+      },
+      // 购买记录统计，根据所有订单的magazineNum统计用户购买总数和使用总数
+      statistics(data) {
+        var groupName = [], // 存放已经统计过的 magazineNum 名单
+          group = {}, record = {};
+        data.forEach(function(item, index) {
+          const magazineId = item.magazine._id;
+          if(groupName.indexOf(magazineId) === -1){
+            groupName.push(magazineId);
+            record = {
+              magazineId: magazineId,
+              tradeCount: Number(item.tradeCount),
+              readCodeUsed: Number(item.readCodeUsed),
+            };
+          }else{
+            record = group[magazineId];
+            record.tradeCount += Number(item.tradeCount);
+            record.readCodeUsed += Number(item.readCodeUsed);
+          }
+          group[magazineId] = record;
+        });
+        this.statisticsRecord = group;
       }
     },
     mounted() {
